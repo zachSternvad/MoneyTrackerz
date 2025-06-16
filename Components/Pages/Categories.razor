@@ -1,0 +1,97 @@
+@page "/categories"
+@using MoneyTrackerz.Data
+@using MoneyTrackerz.Services
+@inject CategoryService CatService
+
+<PageTitle>Kategorier</PageTitle>
+
+<h1>Kategorier</h1>
+<p>Här kan du se och hantera dina transaktionskategorier.</p>
+
+<div class="row">
+    <div class="col-md-6">
+        <!-- Tabell som visar befintliga kategorier -->
+        @if (categories is null)
+        {
+            <p><em>Laddar kategorier...</em></p>
+        }
+        else
+        {
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Namn</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var category in categories)
+                    {
+                        <tr>
+                            <td>@category.Id</td>
+                            <td>@category.Name</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+    <div class="col-md-6">
+        <!-- Formulär för att lägga till en ny kategori -->
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Lägg till ny kategori</h5>
+                <EditForm Model="@newCategory" OnValidSubmit="HandleAddCategory" FormName="AddCategory">
+                    <DataAnnotationsValidator />
+                    
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Namn på kategori</label>
+                        <InputText id="name" class="form-control" @bind-Value="newCategory.Name" />
+                        <ValidationMessage For="@(() => newCategory.Name)" />
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">Skapa kategori</button>
+                </EditForm>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@code {
+    // Här deklarerar jag en lista som kommer hålla alla kategorier som visas på sidan.
+    // Den är "nullable" (frågetecknet efter List) för att indikera att den kan vara null innan datan har laddats.
+    private List<Category>? categories;
+
+    // Här skapar jag ett nytt, tomt Category-objekt.
+    // Detta objekt kommer att vara kopplat till fälten i vårt formulär.
+    private Category newCategory = new();
+
+    // Denna metod är en del av Blazors livscykel och körs automatiskt
+    // när komponenten först initialiseras. Det är det perfekta stället
+    // att hämta in startdata.
+    protected override async Task OnInitializedAsync()
+    {
+        // Här anropar jag vår CategoryService för att hämta den befintliga listan
+        // av kategorier och lagrar den i vår lokala `categories`-variabel.
+        categories = await CatService.GetCategoriesAsync();
+    }
+
+    // Denna metod kommer att köras när användaren skickar in ett giltigt formulär.
+    // Att den är "async Task" betyder att den kan utföra operationer som tar tid,
+    // som att anropa en service.
+    private async Task HandleAddCategory()
+    {
+        // Här anropar jag vår CategoryService för att spara den nya kategorin
+        // som användaren har matat in i formuläret.
+        await CatService.AddCategoryAsync(newCategory);
+
+        // Efter att kategorin är sparad så skapar jag ett nytt tomt Category-objekt.
+        // Detta rensar formuläret så att användaren kan mata in en ny kategori direkt.
+        newCategory = new();
+
+        // För att den nya kategorin ska synas i listan direkt, utan att sidan
+        // behöver laddas om, så anropar jag servicen igen för att hämta den uppdaterade listan.
+        categories = await CatService.GetCategoriesAsync();
+    }
+}

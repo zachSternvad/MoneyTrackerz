@@ -1,5 +1,5 @@
+// Fil: Program.cs
 using MoneyTrackerz.Components;
-// Importera din nya namespace för services
 using MoneyTrackerz.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -8,13 +8,13 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
-// ---- LÄGG TILL DENNA RAD ----
-// Här registrerar vi TransactionService som en "Singleton".
-// Det betyder att en enda instans av TransactionService kommer att skapas
-// och återanvändas i hela applikationen. Perfekt för vår minneslista.
+// Registrerar TransactionService som en Singleton.
 builder.Services.AddSingleton<TransactionService>();
-// -----------------------------
 
+// --- LÄGG TILL DENNA RAD ---
+// Registrerar även CategoryService som en Singleton.
+builder.Services.AddSingleton<CategoryService>();
+// -----------------------------
 
 var app = builder.Build();
 
@@ -22,13 +22,11 @@ var app = builder.Build();
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error", createScopeForErrors: true);
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
 app.UseHttpsRedirection();
-
-app.UseStaticFiles(); // Denna rad fanns troligen redan, men se till att den är med.
+app.UseStaticFiles();
 app.UseAntiforgery();
 
 app.MapRazorComponents<App>()
