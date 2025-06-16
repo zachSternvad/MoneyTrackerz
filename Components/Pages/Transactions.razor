@@ -1,0 +1,115 @@
+@page "/transactions"
+@using MoneyTrackerz.Data
+@using MoneyTrackerz.Services
+@inject TransactionService TxService
+
+<PageTitle>Transaktioner</PageTitle>
+
+<h1>Transaktioner</h1>
+
+<p>Här kan du se och lägga till nya transaktioner.</p>
+
+<!-- Formulär för att lägga till en ny transaktion -->
+<div class="card bg-light mb-4">
+    <div class="card-body">
+        <h5 class="card-title">Lägg till ny transaktion</h5>
+        <EditForm Model="@newTransaction" OnValidSubmit="HandleAddTransaction" FormName="AddTransaction">
+            <DataAnnotationsValidator />
+            
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label for="description" class="form-label">Beskrivning</label>
+                    <InputText id="description" class="form-control" @bind-Value="newTransaction.Description" />
+                    <ValidationMessage For="@(() => newTransaction.Description)" />
+                </div>
+                <div class="col-md-3">
+                    <label for="amount" class="form-label">Belopp (SEK)</label>
+                    <InputNumber id="amount" class="form-control" @bind-Value="newTransaction.Amount" />
+                    <ValidationMessage For="@(() => newTransaction.Amount)" />
+                </div>
+                <div class="col-md-3">
+                    <label for="type" class="form-label">Typ</label>
+                    <InputSelect id="type" class="form-select" @bind-Value="newTransaction.Type">
+                        @foreach (var type in Enum.GetValues(typeof(TransactionType)))
+                        {
+                            <option value="@type">@type</option>
+                        }
+                    </InputSelect>
+                </div>
+                <div class="col-12">
+                    <button type="submit" class="btn btn-primary">Lägg till</button>
+                </div>
+            </div>
+        </EditForm>
+    </div>
+</div>
+
+
+<!-- Tabell som visar befintliga transaktioner -->
+@if (transactions is null)
+{
+    <p><em>Laddar transaktioner...</em></p>
+}
+else
+{
+    <table class="table table-striped table-hover">
+        <thead>
+            <tr>
+                <th>Datum</th>
+                <th>Beskrivning</th>
+                <th>Typ</th>
+                <th class="text-end">Belopp</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var tx in transactions)
+            {
+                <tr>
+                    <td>@tx.Date.ToShortDateString()</td>
+                    <td>@tx.Description</td>
+                    <td>@tx.Type</td>
+                    <td class="text-end @(tx.Type == TransactionType.Income ? "text-success" : "text-danger")">
+                        @tx.Amount.ToString("C")
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+
+@code {
+    // Lista för att hålla transaktionerna som visas på sidan.
+    private List<Transaction>? transactions;
+
+    // Ett nytt Transaction-objekt som är bundet till vårt formulär.
+    private Transaction newTransaction = new();
+
+    // Denna Blazor-livscykelmetod körs när komponenten initialiseras.
+    // Perfekt ställe att hämta data.
+    protected override async Task OnInitializedAsync()
+    {
+        transactions = await TxService.GetTransactionsAsync();
+    }
+
+    // Denna metod körs när formuläret skickas in och är giltigt.
+    private async Task HandleAddTransaction()
+    {
+        // Vi skapar en kopia för att undvika referensproblem
+        var transactionToAdd = new Transaction
+        {
+            Description = newTransaction.Description,
+            Amount = newTransaction.Amount,
+            Type = newTransaction.Type,
+            Date = DateTime.Now // Sätter datumet här
+        };
+
+        await TxService.AddTransactionAsync(transactionToAdd);
+
+        // Nollställ formuläret för nästa inmatning
+        newTransaction = new();
+
+        // Ladda om listan för att visa den nya transaktionen direkt
+        transactions = await TxService.GetTransactionsAsync();
+    }
+}

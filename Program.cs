@@ -1,10 +1,20 @@
 using MoneyTrackerz.Components;
+// Importera din nya namespace för services
+using MoneyTrackerz.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+
+// ---- LÄGG TILL DENNA RAD ----
+// Här registrerar vi TransactionService som en "Singleton".
+// Det betyder att en enda instans av TransactionService kommer att skapas
+// och återanvändas i hela applikationen. Perfekt för vår minneslista.
+builder.Services.AddSingleton<TransactionService>();
+// -----------------------------
+
 
 var app = builder.Build();
 
@@ -18,10 +28,9 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-
+app.UseStaticFiles(); // Denna rad fanns troligen redan, men se till att den är med.
 app.UseAntiforgery();
 
-app.MapStaticAssets();
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
