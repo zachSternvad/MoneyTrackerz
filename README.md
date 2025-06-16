@@ -6,7 +6,7 @@ En modern, open-source app för att spåra utgifter, inkomster och skulder, bygg
 
 ## Om Projektet
 
-MoneyTrackerz föddes ur behovet av ett enkelt men kraftfullt verktyg för att hantera privatekonomi. Målet är att skapa en intuitiv webbapplikation där användare enkelt kan logga sina transaktioner, kategorisera dem och hålla koll på skulder. Applikationen byggs från grunden med den senaste tekniken från Microsoft.
+MoneyTrackerz föddes ur behovet av ett enkelt men kraftfullt verktyg för att hantera privatekonomi. Målet är att skapa en intuitiv webbapplikation där användare enkelt kan logga sina transaktioner, kategorisera dem och hålla koll på skulder.
 
 **Teknikstack:**
 * [.NET 9](https://dotnet.microsoft.com/en-us/)
@@ -59,24 +59,6 @@ Se till att du har följande programvara installerad:
 * [ ] Implementera databas med Entity Framework Core.
 * [ ] Utveckla en visuell dashboard med diagram.
 * [ ] Lägga till användarautentisering.
-
-Se [öppna issues](https://github.com/zachSternvad/MoneyTrackerz/issues) för en komplett lista över föreslagna funktioner och kända buggar.
-
-## ❤️ Bidra
-
-Bidrag är det som gör open source-communityt till en så fantastisk plats att lära sig, inspireras och skapa. Alla bidrag du gör är **mycket uppskattade**.
-
-Om du har ett förslag för att göra detta projekt bättre, vänligen forka repot och skapa en pull request. Du kan också helt enkelt öppna en issue med taggen "enhancement". Glöm inte att ge projektet en stjärna! Tack igen!
-
-1.  Forka projektet.
-2.  Skapa din egen Feature Branch (`git checkout -b feature/AmazingFeature`).
-3.  Committa dina ändringar (`git commit -m 'Add some AmazingFeature'`).
-4.  Pusha till din Branch (`git push origin feature/AmazingFeature`).
-5.  Öppna en Pull Request.
-
-## 📜 Licens
-
-Distribueras under MIT-licensen. Se `LICENSE.txt` för mer information.
 
 ---
 Zach Sternvad - [GitHub](https://github.com/zachSternvad)
